@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">PhotoEditor</string>
+    <string name="empty">Нет данных</string>
+    <string name="progress_format">%s %%</string>
+
+    <string name="select_photo">Выбрать фото</string>
+    <string name="enter_name">Введите имя файла</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="property">Свойство</string>
+    <string name="standard">Стандартные</string>
+    <string name="extend">Расширенные</string>
+    <string name="filter">Фильтры</string>
+
+    <string name="filter_check">Выберите фильтр</string>
+    <string name="filter_none">Без фильтра</string>
+    <string name="filter_crossprocess">Пленка</string>
+    <string name="filter_documentary">Документальный</string>
+    <string name="filter_grayscale">Оттенки серого</string>
+    <string name="filter_lomoish">Ломография</string>
+    <string name="filter_negative">Негатив</string>
+    <string name="filter_posterize">Постеризация</string>
+    <string name="filter_sepia">Сепия</string>
+
+</resources>

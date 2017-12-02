@@ -1,0 +1,18 @@
+<tabs>
+
+    <tab
+        id="@+id/bottom_menu_standard"
+        icon="@drawable/ic_tune"
+        title="@string/standard"/>
+
+    <tab
+        id="@+id/bottom_menu_extend"
+        icon="@drawable/ic_extend"
+        title="@string/extend"/>
+
+    <tab
+        id="@+id/bottom_menu_filter"
+        icon="@drawable/ic_photo_filter"
+        title="@string/filter"/>
+
+</tabs>

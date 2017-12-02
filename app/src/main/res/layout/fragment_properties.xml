@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:orientation="horizontal"
+        tools:ignore="RtlHardcoded">
+
+        <ImageButton
+            android:id="@+id/fragment_property_list_button_flip_hor"
+            android:layout_width="@dimen/button_flip_size"
+            android:layout_height="@dimen/button_flip_size"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_flip"
+            tools:ignore="ContentDescription"/>
+
+        <ImageButton
+            android:id="@+id/fragment_property_list_button_flip_vert"
+            android:layout_width="@dimen/button_flip_size"
+            android:layout_height="@dimen/button_flip_size"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_flip_vert"
+            tools:ignore="ContentDescription"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_properties_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
