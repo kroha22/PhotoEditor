@@ -2,7 +2,6 @@ package com.kroha22.photoEditor.photoEffects
 
 import android.media.effect.EffectFactory
 import com.kroha22.photoEditor.R
-import java.util.*
 
 /**
  * Created by Olga
@@ -30,21 +29,17 @@ enum class Modify(val effectName: String) {
 }
 //--------------------------------------------------------------------------------------------
 
-enum class Filter(val filterName: String, val effectName: String?) {
-    NONE("Без фильтра", null),
-    CROSSPROCESS("Пленка", EffectFactory.EFFECT_CROSSPROCESS),
-    DOCUMENTARY("Документальный", EffectFactory.EFFECT_DOCUMENTARY),
-    GRAYSCALE("Оттенки серого", EffectFactory.EFFECT_GRAYSCALE),
-    LOMOISH("Ломография", EffectFactory.EFFECT_LOMOISH),
-    NEGATIVE("Негатив", EffectFactory.EFFECT_NEGATIVE),
-    POSTERIZE("Постеризация", EffectFactory.EFFECT_POSTERIZE),
-    SEPIA("Сепия", EffectFactory.EFFECT_SEPIA)
-}
-
-//--------------------------------------------------------------------------------------------
-enum class PropertiesType {
-    EXTEND,
-    STANDARD
+enum class Filter(val filterName: String,
+                  val effectName: String?,
+                  val iconId: Int) {
+    NONE("Без фильтра", null, R.drawable.img_none),
+    CROSSPROCESS("Пленка", EffectFactory.EFFECT_CROSSPROCESS, R.drawable.img_crossprocess),
+    DOCUMENTARY("Документальный", EffectFactory.EFFECT_DOCUMENTARY, R.drawable.img_documentary),
+    GRAYSCALE("Оттенки серого", EffectFactory.EFFECT_GRAYSCALE, R.drawable.img_grayscale),
+    LOMOISH("Ломография", EffectFactory.EFFECT_LOMOISH, R.drawable.img_lomoish),
+    NEGATIVE("Негатив", EffectFactory.EFFECT_NEGATIVE, R.drawable.img_negative),
+    POSTERIZE("Постеризация", EffectFactory.EFFECT_POSTERIZE, R.drawable.img_posterize),
+    SEPIA("Сепия", EffectFactory.EFFECT_SEPIA, R.drawable.img_sepia)
 }
 
 //--------------------------------------------------------------------------------------------
@@ -75,18 +70,6 @@ enum class Property(val propertyName: String,
 
     fun clear() {
         currentValue = defaultValue
-    }
-
-    //--------------------------------------------------------------------------------------------
-    companion object {
-        fun get(type: PropertiesType): List<Property> {
-            return when (type) {
-                PropertiesType.EXTEND -> ArrayList(Arrays.asList(Property.AUTOFIX, Property.BLACKWHITE, Property.FILLIGHT, Property.GRAIN, Property.TEMPERATURE, Property.FISHEYE))
-                PropertiesType.STANDARD -> ArrayList(Arrays.asList(Property.BRIGHTNESS, Property.CONTRAST, Property.SATURATE, Property.SHARPEN))
-
-            }
-        }
-
     }
 }
 //--------------------------------------------------------------------------------------------

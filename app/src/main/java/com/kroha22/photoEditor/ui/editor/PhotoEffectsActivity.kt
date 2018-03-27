@@ -1,18 +1,23 @@
 package com.kroha22.photoEditor.ui.editor
 
-import android.media.effect.EffectContext
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
-import android.opengl.GLSurfaceView
 import android.os.Bundle
-import android.widget.Toast
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import javax.microedition.khronos.egl.EGLConfig
-import javax.microedition.khronos.opengles.GL10
-
+import com.kroha22.photoEditor.R
+import com.kroha22.photoEditor.photoEffects.Filter
+import com.kroha22.photoEditor.photoEffects.Modify
+import com.kroha22.photoEditor.photoEffects.Property
 
 /**
  * Created by Olga
@@ -26,32 +31,47 @@ interface PhotoEffectsView : MvpView {
 
     fun showPlaceholder()
 
-    fun showPhoto()
+    fun showPhoto(photo: Bitmap)
 
     fun savePhoto()
 
-    fun applyEffects()
-
     fun showToast(message: String)
 
+    fun showProperties(properties: Array<Property>)
+
+    fun showPropertyDetail(property: Property)
+
+    fun hidePropertyDetail()
+
+    fun showFilters(filters: Array<Filter>)
+
+    fun highlightFilter(filter: Filter, color: Int)
+
+    fun applyEffects()
 }
+
 //---------------------------------------------------------------------------------------------
-abstract class PhotoEffectsActivity : MvpAppCompatActivity(), GLSurfaceView.Renderer, PhotoEffectsView {
-
-    private var effectContext: EffectContext? = null
-    private var needSave = false
-    private var needInit = true
-
-    private lateinit var effectView: GLSurfaceView
+abstract class PhotoEffectsActivity : MvpAppCompatActivity(), PhotoEffectsView {
+    //---------------------------------------------------------------------------------------------
+    private lateinit var photoViewContainer: PhotoViewContainer
+    private lateinit var filterViews: LinkedHashMap<Filter, View>
 
     @InjectPresenter
     lateinit var presenter: PhotoEffectsPresenter
 
+    private var needReset: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        effectView = createSurfaceView()
-        initEffectView()
+        val photoContainer = PhotoContainer(this, presenter, contentResolver)
+        setPhotoContainer(photoContainer.getView())
+        photoViewContainer = photoContainer
+
+        filterViews = LinkedHashMap()
+
+        getFlipHorBtn().setOnClickListener { presenter.userSetFlip(Modify.FLIPHOR) }
+        getFlipVertBtn().setOnClickListener { presenter.userSetFlip(Modify.FLIPVERT) }
     }
 
     override fun onStart() {
@@ -61,12 +81,18 @@ abstract class PhotoEffectsActivity : MvpAppCompatActivity(), GLSurfaceView.Rend
 
     override fun onPause() {
         super.onPause()
-        effectView.onPause()
+        photoViewContainer.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        effectView.onResume()
+        photoViewContainer.onResume()
+
+        if (needReset) {
+            presenter.userResetProperties()
+            presenter.userResetFilter()
+            needReset = false
+        }
     }
 
     override fun onDestroy() {
@@ -74,40 +100,62 @@ abstract class PhotoEffectsActivity : MvpAppCompatActivity(), GLSurfaceView.Rend
         presenter.onDestroy()
     }
 
-    override fun onDrawFrame(gl: GL10) {
-        if (needInit) {
-            effectContext = EffectContext.createWithCurrentGlContext()
-            presenter.initTextures()
-            needInit = false
-        }
-
-        presenter.userCreateEffect(effectContext!!)
-
-        if (needSave) {
-            presenter.userSavePhoto(effectView, gl, contentResolver)
-            needSave = false
-        }
-    }
-
-    override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
-        presenter.updateViewSize(width, height)
-    }
-
-    override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {/**/}
-
-    override fun showPhoto() {
-        hidePlaceholder()
-        needInit = true
-        effectView.requestRender()
+    override fun showPhoto(photo: Bitmap) {
+        photoViewContainer.showPhoto(photo)
     }
 
     override fun savePhoto() {
-        needSave = true
-        effectView.requestRender()
+        photoViewContainer.savePhoto()
     }
 
     override fun applyEffects() {
-        effectView.requestRender()
+        photoViewContainer.applyEffects()
+    }
+
+    override fun showProperties(properties: Array<Property>) {
+        getEffectsContainer().removeAllViewsInLayout()
+        properties.forEach {
+            getEffectsContainer().addView(
+                    createPropertyView(this, it.iconId, { presenter.userCheckProperty(it) }),
+                    LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            )
+        }
+    }
+
+    override fun showPropertyDetail(property: Property) {
+        getEffectsDetails().visibility = View.VISIBLE
+        getEffectsDetails().removeAllViewsInLayout()
+        getEffectsDetails().addView(createPropertyDetailView(this, property, presenter::userChangePropertiesValue),
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        )
+    }
+
+    override fun hidePropertyDetail() {
+        getEffectsDetails().visibility = View.INVISIBLE
+    }
+
+    override fun showFilters(filters: Array<Filter>) {
+        getEffectsContainer().removeAllViewsInLayout()
+        filters.forEach {
+            val view = createFilterView(this, it.iconId, { presenter.userCheckFilter(it) })
+            filterViews.put(it, view)
+            getEffectsContainer().addView(
+                    view,
+                    LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            )
+        }
+    }
+
+    override fun highlightFilter(filter: Filter, color: Int) {
+        filterViews[filter]!!.setBackgroundColor(color)
+    }
+
+    fun resetFilters() {
+        needReset = true
+    }
+
+    fun resetProperties() {
+        needReset = true
     }
 
     override fun showToast(message: String) {
@@ -122,13 +170,58 @@ abstract class PhotoEffectsActivity : MvpAppCompatActivity(), GLSurfaceView.Rend
         presenter.userEnterPhotoName(string)
     }
 
-    fun initEffectView() {
-        effectView.setEGLContextClientVersion(2)
-        effectView.setRenderer(this)
-        effectView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+    abstract fun getEffectsDetails(): LinearLayout
+    abstract fun getEffectsContainer(): LinearLayout
+    abstract fun getFlipHorBtn(): ImageButton
+    abstract fun getFlipVertBtn(): ImageButton
+    internal abstract fun setPhotoContainer(view: View)
+
+    //--------------------------------------------------------------------------------------------------
+    @SuppressLint("SetTextI18n", "InflateParams")
+    private fun createPropertyDetailView(context: Context, model: Property, onPropertyChange: (Property) -> Unit): View {
+        val rootView = LayoutInflater.from(context).inflate(R.layout.detail_property, null, false) as LinearLayout
+        val propertyName = rootView.findViewById<TextView>(R.id.property_name)
+        val percent = rootView.findViewById<TextView>(R.id.property_value)
+        val propertySeekBar = rootView.findViewById<SeekBar>(R.id.property_seek_bar)
+        val propertyImg = rootView.findViewById<ImageView>(R.id.property_img)
+
+        propertyName.text = model.propertyName
+        percent.text = model.value.toString() + " %"
+        propertySeekBar.progress = model.value
+        propertyImg.setImageResource(model.iconId)
+        propertySeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                percent.text = progress.toString() + "%"
+                model.value = progress
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                onPropertyChange(model)
+            }
+        })
+
+        return rootView
     }
 
-    internal abstract fun createSurfaceView(): GLSurfaceView
-
+    //--------------------------------------------------------------------------------------------------
+    @SuppressLint("InflateParams")
+    private fun createPropertyView(context: Context, imgRes: Int, onClick: () -> Unit): View {
+        val rootView = LayoutInflater.from(context).inflate(R.layout.item_property, null, false) as LinearLayout
+        val propertyImg = rootView.findViewById<ImageView>(R.id.item_property_icon)
+        propertyImg.setImageResource(imgRes)
+        rootView.setOnClickListener({ onClick() })
+        return rootView
+    }
+    //--------------------------------------------------------------------------------------------------
+    @SuppressLint("InflateParams")
+    private fun createFilterView(context: Context, imgRes: Int, onClick: () -> Unit): View {
+        val rootView = LayoutInflater.from(context).inflate(R.layout.item_filter, null, false) as LinearLayout
+        val propertyImg = rootView.findViewById<ImageView>(R.id.item_filter_icon)
+        propertyImg.setImageResource(imgRes)
+        rootView.setOnClickListener({ onClick() })
+        return rootView
+    }
 }
-
