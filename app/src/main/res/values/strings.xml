@@ -9,8 +9,7 @@
     <string name="cancel">Отмена</string>
 
     <string name="property">Свойство</string>
-    <string name="standard">Стандартные</string>
-    <string name="extend">Расширенные</string>
+    <string name="edit">Редактирование</string>
     <string name="filter">Фильтры</string>
 
     <string name="filter_check">Выберите фильтр</string>

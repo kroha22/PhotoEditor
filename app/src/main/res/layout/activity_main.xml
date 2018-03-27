@@ -8,18 +8,18 @@
                                         android:fitsSystemWindows="true">
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/activity_main_main_content"
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
-            android:id="@+id/activity_main_appbar"
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/activity_main_toolbar"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:title="@string/app_name"
@@ -29,47 +29,73 @@
         </android.support.design.widget.AppBarLayout>
 
         <RelativeLayout
-            android:id="@+id/activity_main_relative_layout_scroll_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/flip_hor_btn"
+                    android:layout_width="@dimen/button_flip_size"
+                    android:layout_height="@dimen/button_flip_size"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_flip"
+                    tools:ignore="ContentDescription"/>
+
+                <ImageButton
+                    android:id="@+id/flip_vert_btn"
+                    android:layout_width="@dimen/button_flip_size"
+                    android:layout_height="@dimen/button_flip_size"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_flip_vert"
+                    tools:ignore="ContentDescription"/>
+            </LinearLayout>
+
             <FrameLayout
-                android:id="@+id/activity_main_frame_layout_photo_container"
+                android:id="@+id/photo_container"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/photo_height"
-                android:layout_gravity="top">
-
-                <android.opengl.GLSurfaceView
-                    android:id="@+id/activity_main_image_view_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:layout_marginBottom="50dp">
 
             </FrameLayout>
 
-            <LinearLayout
+            <HorizontalScrollView
+                android:id="@+id/scrollable_effects_container"
+                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/activity_main_frame_layout_photo_container">
+                android:background="@color/colorPrimary"
+                android:layout_height="wrap_content">
 
-                <FrameLayout
-                    android:id="@+id/activity_main_frame_layout_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorPrimary"/>
+                <LinearLayout
+                    android:layout_marginBottom="@dimen/nav_bar_height"
+                    android:id="@+id/effects_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"/>
 
-            </LinearLayout>
+            </HorizontalScrollView >
 
+            <LinearLayout
+                android:id="@+id/effects_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_above="@id/scrollable_effects_container"
+                android:background="@color/colorPrimary"/>
 
             <FrameLayout
-                android:id="@+id/activity_main_photo_placeholder"
+                android:id="@+id/photo_placeholder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimary">
+                android:background="@color/colorPrimary"
+                android:visibility="invisible">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -82,22 +108,14 @@
                     android:tint="@color/colorPrimaryDark"
                     tools:ignore="ContentDescription"/>
 
-
             </FrameLayout>
 
-            <com.roughike.bottombar.BottomBar
-                android:id="@+id/bottomBar"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_alignParentBottom="true"
-                app:bb_activeTabColor="@color/blue"
-                app:bb_tabXmlResource="@xml/bottombar_tabs"/>
         </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/activity_main_nav_view"
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"

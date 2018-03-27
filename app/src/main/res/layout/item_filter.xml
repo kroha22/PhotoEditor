@@ -4,14 +4,14 @@
               xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="@dimen/item_filter_icon_border">
 
     <ImageView
-        android:id="@+id/item_property_icon"
-        android:layout_width="@dimen/item_property_icon_size"
-        android:layout_height="@dimen/item_property_icon_size"
-        app:srcCompat="@drawable/ic_property"
-        android:tint="@color/blue"
+        android:id="@+id/item_filter_icon"
+        android:layout_width="@dimen/item_filter_icon_size"
+        android:layout_height="@dimen/item_filter_icon_size"
+        app:srcCompat="@drawable/img_none"
         tools:ignore="ContentDescription"/>
 
 </LinearLayout>
