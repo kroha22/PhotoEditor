@@ -1,2 +1,2 @@
-#PhotoEditor
+# PhotoEditor
 Simple photo editor with EffectFactory
