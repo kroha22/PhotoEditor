@@ -19,6 +19,8 @@ import com.kroha22.photoEditor.photoEffects.Filter
 import com.kroha22.photoEditor.photoEffects.Modify
 import com.kroha22.photoEditor.photoEffects.Property
 
+
+
 /**
  * Created by Olga
  * on 10.11.2017.
@@ -33,8 +35,6 @@ interface PhotoEffectsView : MvpView {
 
     fun showPhoto(photo: Bitmap)
 
-    fun savePhoto()
-
     fun showToast(message: String)
 
     fun showProperties(properties: Array<Property>)
@@ -48,6 +48,10 @@ interface PhotoEffectsView : MvpView {
     fun highlightFilter(filter: Filter, color: Int)
 
     fun applyEffects()
+
+    fun showProgress()
+
+    fun hideProgress()
 }
 
 //---------------------------------------------------------------------------------------------
@@ -104,10 +108,6 @@ abstract class PhotoEffectsActivity : MvpAppCompatActivity(), PhotoEffectsView {
         photoViewContainer.showPhoto(photo)
     }
 
-    override fun savePhoto() {
-        photoViewContainer.savePhoto()
-    }
-
     override fun applyEffects() {
         photoViewContainer.applyEffects()
     }
@@ -150,6 +150,14 @@ abstract class PhotoEffectsActivity : MvpAppCompatActivity(), PhotoEffectsView {
         filterViews[filter]!!.setBackgroundColor(color)
     }
 
+    override fun showToast(message: String) {
+       runOnUiThread({ Toast.makeText(this, message, Toast.LENGTH_SHORT).show()})
+    }
+
+    fun savePhoto() {
+        photoViewContainer.savePhoto()
+    }
+
     fun resetFilters() {
         needReset = true
     }
@@ -158,16 +166,8 @@ abstract class PhotoEffectsActivity : MvpAppCompatActivity(), PhotoEffectsView {
         needReset = true
     }
 
-    override fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
     fun selectPhoto(selectedImage: Uri) {
         presenter.userSelectPhoto(contentResolver, selectedImage)
-    }
-
-    fun setPhotoName(string: String) {
-        presenter.userEnterPhotoName(string)
     }
 
     abstract fun getEffectsDetails(): LinearLayout

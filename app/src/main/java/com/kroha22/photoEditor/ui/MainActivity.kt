@@ -8,15 +8,14 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import com.kroha22.photoEditor.R
 import com.kroha22.photoEditor.ui.editor.PhotoEffectsActivity
 
@@ -26,6 +25,7 @@ const val GALLERY_REQUEST = 1
 class MainActivity  : PhotoEffectsActivity() {
 
     lateinit private var photoPlaceholder: FrameLayout
+    lateinit private var progress: ProgressBar
     lateinit private var photoContainer: FrameLayout
     lateinit private var toolbar: Toolbar
     lateinit private var navigationView: NavigationView
@@ -39,6 +39,7 @@ class MainActivity  : PhotoEffectsActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_main)
         photoPlaceholder = findViewById(R.id.photo_placeholder)
+        progress = findViewById(R.id.progress)
         photoContainer = findViewById(R.id.photo_container)
         drawerLayout = findViewById(R.id.activity_main_drawerlayout)
         effectsContainer = findViewById(R.id.effects_container)
@@ -67,7 +68,7 @@ class MainActivity  : PhotoEffectsActivity() {
                     showPhotoPicker()
                 }
                 R.id.navigation_menu_item_save -> {
-                    showEnterNameDialog()
+                    savePhoto()
                 }
             }
             drawerLayout.closeDrawers()
@@ -105,6 +106,14 @@ class MainActivity  : PhotoEffectsActivity() {
 
     override fun setPhotoContainer(view: View) {
         photoContainer.addView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+    }
+
+    override fun showProgress() {
+        runOnUiThread({progress.visibility = View.VISIBLE})
+    }
+
+    override fun hideProgress() {
+        runOnUiThread({progress.visibility = View.INVISIBLE})
     }
 
     override fun hidePlaceholder() {
@@ -153,21 +162,4 @@ class MainActivity  : PhotoEffectsActivity() {
         startActivityForResult(photoPickerIntent, GALLERY_REQUEST)
     }
 
-    private fun showEnterNameDialog() {
-        val name = EditText(this)
-
-        val builder = AlertDialog.Builder(this)
-
-        builder.
-                setMessage(R.string.enter_name).
-                setView(name).
-                setPositiveButton(R.string.enter_name) { _, _ ->
-                    if (name.text.isEmpty()) {
-                        name.isFocusable = true
-                    } else {
-                        setPhotoName(name.text.toString())
-                    }
-                }.
-                setNegativeButton(R.string.enter_name, null).create().show()
-    }
 }

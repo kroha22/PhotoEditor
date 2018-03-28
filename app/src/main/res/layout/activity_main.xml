@@ -89,6 +89,13 @@
                 android:background="@color/colorPrimary"
                 android:orientation="horizontal"/>
 
+            <ProgressBar
+                android:id="@+id/progress"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+
             <FrameLayout
                 android:id="@+id/photo_placeholder"
                 android:layout_width="match_parent"

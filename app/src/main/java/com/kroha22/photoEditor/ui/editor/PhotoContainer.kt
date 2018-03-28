@@ -23,11 +23,7 @@ interface PhotoEditor {
 
     fun updatePhoto(width: Int, height: Int)
 
-    fun savePhoto(glSurfaceView: GLSurfaceView,
-                  gl: GL10,
-                  contentResolver: ContentResolver,
-                  height: Int,
-                  width: Int)
+    fun savePhoto(glSurfaceView: GLSurfaceView, gl: GL10, contentResolver: ContentResolver)
 }
 //---------------------------------------------------------------------------------------------
 interface PhotoViewContainer {
@@ -54,9 +50,6 @@ class PhotoContainer(context: Context,
     private var needInit = true
 
     private var photo: Bitmap?
-
-    private var imageWidth: Int = 0
-    private var imageHeight: Int = 0
 
     init {
         if (isProbablyEmulator()) {
@@ -107,7 +100,7 @@ class PhotoContainer(context: Context,
         photoEditor.applyPhotoEffects(effectContext!!)
 
         if (needSave) {
-            photoEditor.savePhoto(effectView, gl, contentResolver, imageHeight, imageWidth)
+            photoEditor.savePhoto(effectView, gl, contentResolver)
             needSave = false
         }
     }

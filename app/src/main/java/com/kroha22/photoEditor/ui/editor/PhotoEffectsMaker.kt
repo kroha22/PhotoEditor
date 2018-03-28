@@ -1,10 +1,13 @@
 package com.kroha22.photoEditor.ui.editor
 
+import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.media.effect.Effect
 import android.media.effect.EffectContext
+import android.opengl.GLSurfaceView
 import com.kroha22.photoEditor.photoEffects.*
 import java.util.*
+import javax.microedition.khronos.opengles.GL10
 
 /**
  * Created by Olga
@@ -21,8 +24,8 @@ class PhotoEffectsMaker {
     private var currentFilter: Filter? = null
     private var flip = IntArray(2)
 
-    private var imageWidth: Int = 0
-    private var imageHeight: Int = 0
+    private var photoWidth: Int = 0
+    private var photoHeight: Int = 0
 
     init {
         currentFilter = Filter.NONE
@@ -94,13 +97,19 @@ class PhotoEffectsMaker {
         }
     }
 
-    fun initPhoto(photo: Bitmap) {
+    fun setPhoto(photo: Bitmap) {
         texRenderer.init()
 
         PhotoUtils.loadPhoto(photo, textures, texRenderer)
-        imageHeight = photo.width
-        imageWidth = photo.height
+        photoWidth = photo.width
+        photoHeight = photo.height
         setResultTexture(0)
+    }
+
+    fun savePhoto(view: GLSurfaceView,
+                  gl: GL10,
+                  contentResolver: ContentResolver): String {
+        return PhotoUtils.savePhoto(gl, contentResolver, view, photoWidth, photoHeight)
     }
 
     fun updateViewSize(width: Int, height: Int) {
@@ -115,20 +124,20 @@ class PhotoEffectsMaker {
         //apply flip
         if (flip[0] % 2 == 1) {
             effect = PhotoUtils.EffectCreator.createEffect(effectContext, Modify.FLIPHOR)
-            applyEffect(resultTexture, ++resultTexture, effect, imageHeight, imageWidth)
+            applyEffect(resultTexture, ++resultTexture, effect, photoWidth, photoHeight)
             releaseEffect(effect)
         }
 
         if (flip[1] % 2 == 1) {
             effect = PhotoUtils.EffectCreator.createEffect(effectContext, Modify.FLIPVERT)
-            applyEffect(resultTexture, ++resultTexture, effect, imageHeight, imageWidth)
+            applyEffect(resultTexture, ++resultTexture, effect, photoWidth, photoHeight)
             releaseEffect(effect)
         }
 
         //apply properties new value
         if (changedProperties.size != 0) {
             effects = PhotoUtils.EffectCreator.createEffects(effectContext, changedProperties)
-            applyEffect(resultTexture, ++resultTexture, effects[0], imageHeight, imageWidth) //apply first effect
+            applyEffect(resultTexture, ++resultTexture, effects[0], photoWidth, photoHeight) //apply first effect
             var sourceTexture: Int
             var destinationTexture: Int
             val textures = IntArray(2)
@@ -140,7 +149,7 @@ class PhotoEffectsMaker {
                 sourceTexture = textures[0]
                 destinationTexture = textures[1]
                 //apply next effect
-                applyEffect(sourceTexture, destinationTexture, effects[n], imageHeight, imageWidth)
+                applyEffect(sourceTexture, destinationTexture, effects[n], photoWidth, photoHeight)
                 //save textures
                 setTexture(resultTexture, destinationTexture + 1)
                 setTexture(resultTexture + 1, sourceTexture + 1)
@@ -153,7 +162,7 @@ class PhotoEffectsMaker {
         //apply filters
         if (currentFilter != null && currentFilter != Filter.NONE) {
             effect = PhotoUtils.EffectCreator.createEffect(effectContext, currentFilter!!)
-            applyEffect(resultTexture, ++resultTexture, effect, imageHeight, imageWidth)
+            applyEffect(resultTexture, ++resultTexture, effect, photoWidth, photoHeight)
             releaseEffect(effect)
         }
 
@@ -162,7 +171,7 @@ class PhotoEffectsMaker {
         renderResult(resultTexture)
     }
 
-    private fun applyEffect(sourceTexture: Int, destinationTexture: Int, effect: Effect, height: Int, width: Int) {
+    private fun applyEffect(sourceTexture: Int, destinationTexture: Int, effect: Effect, width: Int, height: Int) {
         effect.apply(textures[sourceTexture], width, height, textures[destinationTexture])
     }
 

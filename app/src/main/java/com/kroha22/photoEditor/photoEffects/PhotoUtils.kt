@@ -11,11 +11,14 @@ import android.opengl.GLUtils
 import android.os.Environment
 import android.provider.MediaStore
 import com.google.common.collect.Lists
+import com.kroha22.photoEditor.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.nio.IntBuffer
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.microedition.khronos.opengles.GL10
 
 
@@ -101,11 +104,12 @@ object PhotoUtils {
     fun savePhoto(gl: GL10,
                   contentResolver: ContentResolver,
                   view: GLSurfaceView,
-                  name: String,
-                  height: Int,
-                  width: Int): String {
-
-        val photo = PhotoUtils.savePixels(gl, height, width, view)
+                  photoWidth: Int,
+                  photoHeight: Int): String {
+        val currentTime = Calendar.getInstance().time
+        val simpleDateFormat = SimpleDateFormat("dd_MM_yyyy_HH_mm_ss", Locale.ROOT)
+        val name = view.context.resources.getString(R.string.app_name) + "_" + simpleDateFormat.format(currentTime)
+        val photo = PhotoUtils.savePixels(gl, photoWidth, photoHeight, view)
         try {
             val file = createFile(name, photo)
             MediaStore.Images.Media.insertImage(contentResolver, file.absolutePath, file.name, file.name)
@@ -131,26 +135,29 @@ object PhotoUtils {
         GLToolbox.initTexParams()
     }
 
-    private fun savePixels(gl: GL10, height: Int, width: Int, view: GLSurfaceView): Bitmap {
+    private fun savePixels(gl: GL10,
+                           photoWidth: Int,
+                           photoHeight: Int,
+                           view: GLSurfaceView): Bitmap {
 
-        val heightView = view.height
-        val widthView = view.width
+        val viewHeight = view.height
+        val viewWidth = view.width
 
         val x: Int
         val y: Int
         val w: Int
         val h: Int
 
-        if (heightView / height < widthView / width) {
-            h = heightView
-            w = width * heightView / height
+        if (viewHeight / photoHeight < viewWidth / photoWidth) {
+            h = viewHeight
+            w = photoWidth * viewHeight / photoHeight
         } else {
-            h = height * widthView / width
-            w = widthView
+            h = photoHeight * viewWidth / photoWidth
+            w = viewWidth
         }
 
-        x = (widthView - w) / 2
-        y = (heightView - h) / 2
+        x = (viewWidth - w) / 2
+        y = (viewHeight - h) / 2
 
         val b = IntArray(w * h)
         val bt = IntArray(w * h)
