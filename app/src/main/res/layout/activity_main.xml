@@ -31,6 +31,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="?attr/actionBarSize"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -57,38 +58,36 @@
                     tools:ignore="ContentDescription"/>
             </LinearLayout>
 
+
             <FrameLayout
                 android:id="@+id/photo_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top"
-                android:layout_marginBottom="50dp">
-
-            </FrameLayout>
+                android:layout_marginBottom="50dp"/>
 
             <HorizontalScrollView
                 android:id="@+id/scrollable_effects_container"
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
-                android:background="@color/colorPrimary"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorPrimary">
 
                 <LinearLayout
-                    android:layout_marginBottom="@dimen/nav_bar_height"
                     android:id="@+id/effects_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"/>
 
-            </HorizontalScrollView >
+            </HorizontalScrollView>
 
             <LinearLayout
                 android:id="@+id/effects_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_above="@id/scrollable_effects_container"
-                android:background="@color/colorPrimary"/>
+                android:background="@color/colorPrimary"
+                android:orientation="horizontal"/>
 
             <FrameLayout
                 android:id="@+id/photo_placeholder"

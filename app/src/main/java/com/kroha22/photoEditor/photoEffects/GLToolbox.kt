@@ -24,6 +24,7 @@ internal object GLToolbox {
         }
 
         val program = GLES20.glCreateProgram()
+        checkGlError("glCreateProgram")
         if (program != 0) {
             glAttachShader(vertexShader, program)
             glAttachShader(pixelShader, program)
@@ -31,6 +32,7 @@ internal object GLToolbox {
 
             val linkStatus = IntArray(1)
             GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0)
+            checkGlError("glGetProgramiv")
             if (linkStatus[0] != GLES20.GL_TRUE) {
                 val info = GLES20.glGetProgramInfoLog(program)
                 GLES20.glDeleteProgram(program)
@@ -46,6 +48,7 @@ internal object GLToolbox {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
+        checkGlError("glTexParameteri")
     }
 
     fun setVertexAttr(indx: Int, size: Int, normalized: Boolean, stride: Int, buffer: FloatBuffer) {
@@ -56,12 +59,16 @@ internal object GLToolbox {
 
     fun draw() {
         GLES20.glClearColor(240.toFloat() / 255, 240.toFloat() / 255, 240.toFloat() / 255, 1.0f)
+        checkGlError("glClearColor")
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        checkGlError("glClear")
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
+        checkGlError("glDrawArrays")
     }
 
     fun disableBlending() {
         GLES20.glDisable(GLES20.GL_BLEND)
+        checkGlError("glDisable")
     }
 
     fun setViewport(width: Int, height: Int) {
@@ -84,10 +91,12 @@ internal object GLToolbox {
 
     fun bindFramebuffer() {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
+        checkGlError("glBindFramebuffer")
     }
 
     fun uniform(location: Int) {
         GLES20.glUniform1i(location, 0)
+        checkGlError("glUniform1i")
     }
 
     fun getAttribLocation(program: Int, name: String): Int {
@@ -100,6 +109,7 @@ internal object GLToolbox {
 
     private fun loadShader(shaderType: Int, source: String): Int {
         val shader = GLES20.glCreateShader(shaderType)
+        checkGlError("glCreateShader")
         if (shader != 0) {
             GLES20.glShaderSource(shader, source)
             GLES20.glCompileShader(shader)
@@ -123,11 +133,11 @@ internal object GLToolbox {
 
     private fun linkProgram(program: Int) {
         GLES20.glLinkProgram(program)
+        checkGlError("glLinkProgram")
     }
 
     private fun checkGlError(op: String) {
         val error = GLES20.glGetError()
-
         if (error != GLES20.GL_NO_ERROR) {
             throw RuntimeException(op + ": glError " + error)
         }

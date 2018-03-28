@@ -97,7 +97,9 @@ class TextureRenderer {
 
         GLToolbox.bindTexture(texId)
 
-        GLToolbox.uniform(texSamplerHandle)
+        if (program != 0) {
+            GLToolbox.uniform(texSamplerHandle)
+        }
 
         GLToolbox.draw()
     }

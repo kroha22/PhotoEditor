@@ -119,14 +119,14 @@ object PhotoUtils {
     /*
      Выгрузка изображений из bitmap
      */
-    fun loadPhoto(bitmap: Bitmap, textures: IntArray, texRenderer: TextureRenderer) {
+    fun loadPhoto(photo: Bitmap, textures: IntArray, texRenderer: TextureRenderer) {
 
         GLES20.glGenTextures(5, textures, 0)
 
-        texRenderer.updateTextureSize(bitmap.width, bitmap.height)
+        texRenderer.updateTextureSize(photo.width, photo.height)
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0])
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, photo, 0)
 
         GLToolbox.initTexParams()
     }

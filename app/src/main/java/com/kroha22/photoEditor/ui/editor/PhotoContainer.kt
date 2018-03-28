@@ -19,7 +19,7 @@ interface PhotoEditor {
 
     fun initPhoto()
 
-    fun createPhotoEffect(effectContext: EffectContext)
+    fun applyPhotoEffects(effectContext: EffectContext)
 
     fun updatePhoto(width: Int, height: Int)
 
@@ -104,7 +104,7 @@ class PhotoContainer(context: Context,
             needInit = false
         }
 
-        photoEditor.createPhotoEffect(effectContext!!)
+        photoEditor.applyPhotoEffects(effectContext!!)
 
         if (needSave) {
             photoEditor.savePhoto(effectView, gl, contentResolver, imageHeight, imageWidth)

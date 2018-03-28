@@ -49,8 +49,8 @@ class PhotoEffectsPresenter : MvpPresenter<PhotoEffectsView>(), PhotoEditor {
         }
     }
 
-    override fun createPhotoEffect(effectContext: EffectContext) {
-        photoEffectsMaker.createEffect(effectContext)
+    override fun applyPhotoEffects(effectContext: EffectContext) {
+        photoEffectsMaker.applyEffects(effectContext)
     }
 
     override fun updatePhoto(width: Int, height: Int) {
@@ -70,10 +70,12 @@ class PhotoEffectsPresenter : MvpPresenter<PhotoEffectsView>(), PhotoEditor {
     }
 
     fun start() {
-        photoEffectsMaker.start()
-
+        val photo = this.photo
         if (photo == null) {
+            photoEffectsMaker.start()
             viewState.showPlaceholder()
+        } else {
+            viewState.showPhoto(photo)
         }
     }
 

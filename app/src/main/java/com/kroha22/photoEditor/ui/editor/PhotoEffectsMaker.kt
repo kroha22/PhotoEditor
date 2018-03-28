@@ -107,7 +107,7 @@ class PhotoEffectsMaker {
         texRenderer.updateViewSize(width, height)
     }
 
-    fun createEffect(effectContext: EffectContext) {
+    fun applyEffects(effectContext: EffectContext) {
         var effect: Effect
         val effects: List<Effect>
         var resultTexture = 0
